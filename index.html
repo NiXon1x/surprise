@@ -152,12 +152,13 @@
   @keyframes popin{from{opacity:0; transform:scale(.8) translateY(30px)}to{opacity:1; transform:none}}
 
   .vid-card{
-    position:relative; width:330px; aspect-ratio:9/16; border-radius:28px; padding:4px;
+    position:relative; width:330px; max-width:calc(100vw - 480px); aspect-ratio:9/16; border-radius:28px; padding:4px;
     background:conic-gradient(from var(--a,0deg),var(--pink),var(--gold),var(--cyan),var(--violet),var(--pink));
     animation:ring 4s linear infinite; transform:rotate(-3deg);
     box-shadow:0 30px 80px rgba(255,79,163,.35);
     touch-action:none;
   }
+  .vid-card.wide{width:560px}
   @property --a{syntax:"<angle>"; inherits:false; initial-value:0deg}
   @keyframes ring{to{--a:360deg}}
   .vid-inner{width:100%; height:100%; border-radius:24px; overflow:hidden; background:#000; position:relative}
@@ -198,6 +199,10 @@
   .avatar div{
     width:100%; height:100%; border-radius:50%; display:grid; place-items:center;
     background:#24163f; font-size:22px;
+  }
+  .avatar .face, .row .mini.face{
+    background:#24163f url("onik.webp") no-repeat;
+    background-size:230%; background-position:44% 46%;
   }
   .avatar::after{
     content:""; position:absolute; right:0; bottom:1px; width:12px; height:12px; border-radius:50%;
@@ -279,6 +284,7 @@
   /* ---------- Phone screens: full-screen chat + floating video ---------- */
   @media (max-width:760px){
     #stage{padding:0; gap:0}
+    .vid-card{max-width:none}
     .phone{width:100%; height:100dvh; border:0; border-radius:0; box-shadow:none}
     .notch{display:none}
     .chat-head{padding-top:calc(14px + env(safe-area-inset-top))}
@@ -289,6 +295,8 @@
     }
     .vid-inner{border-radius:17px}
     .vid-card.big{width:min(62vw,260px)}
+    .vid-card.wide{width:min(52vw,210px)}
+    .vid-card.wide.big{width:calc(100vw - 24px)}
     .live{top:8px; left:8px; font-size:10px; padding:2px 6px}
     .msg{max-width:58%}
   }
@@ -326,7 +334,7 @@
     <div class="notch"></div>
     <div class="chat-head">
       <span class="back">‹</span>
-      <div class="avatar"><div>👶</div></div>
+      <div class="avatar"><div class="face"></div></div>
       <div class="who">
         <b id="sender-name"></b>
         <small id="status">online</small>
@@ -373,6 +381,13 @@
   const vid = $("vid");
   let usingYouTube = false;
   vid.addEventListener("error", useYouTube);
+  // fit the frame to the clip's real shape (landscape clips get a wide frame)
+  vid.addEventListener("loadedmetadata", () => {
+    if (!vid.videoWidth) return;
+    const card = $("vid-card");
+    card.style.aspectRatio = vid.videoWidth + " / " + vid.videoHeight;
+    if (vid.videoWidth > vid.videoHeight) card.classList.add("wide");
+  });
   function useYouTube(){
     if (usingYouTube) return;
     usingYouTube = true;
@@ -492,7 +507,7 @@
   function addTyping(){
     const row = document.createElement("div");
     row.className = "row tail";
-    row.innerHTML = '<div class="mini">👶</div><div class="typing"><i></i><i></i><i></i></div>';
+    row.innerHTML = '<div class="mini face"></div><div class="typing"><i></i><i></i><i></i></div>';
     chat.appendChild(row);
     statusEl.textContent = "typing…";
     scrollDown();
@@ -505,7 +520,7 @@
     row.className = "row tail";
     if (prevRow) prevRow.classList.remove("tail");
     const mini = document.createElement("div");
-    mini.className = "mini"; mini.textContent = "👶";
+    mini.className = "mini face";
     const msg = document.createElement("div");
     const r = Math.random();
     msg.className = "msg" + (r < .2 ? " alt" : r < .35 ? " alt2" : "") + (Math.random() < .18 ? " loud" : "");
