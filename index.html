@@ -162,7 +162,7 @@
   @property --a{syntax:"<angle>"; inherits:false; initial-value:0deg}
   @keyframes ring{to{--a:360deg}}
   .vid-inner{width:100%; height:100%; border-radius:24px; overflow:hidden; background:#000; position:relative}
-  .vid-inner video, .vid-inner iframe, #yt{width:100%; height:100%; object-fit:cover; display:block; border:0}
+  .vid-inner video, .vid-inner iframe, #yt{width:100%; height:100%; object-fit:contain; display:block; border:0; background:#000}
   .live{
     position:absolute; top:12px; left:12px; z-index:2; font-size:12px; font-weight:600; letter-spacing:1px;
     background:#ff2d55; padding:3px 9px; border-radius:6px; display:flex; align-items:center; gap:6px;
@@ -322,7 +322,7 @@
 </section>
 
 <section id="stage">
-  <div class="vid-card" id="vid-card">
+  <div class="vid-card wide" id="vid-card" style="aspect-ratio:854/480">
     <div class="vid-inner" id="vid-inner">
       <span class="live">LIVE</span>
       <video id="vid" src="stewie.mp4" loop playsinline preload="auto"></video>
@@ -386,12 +386,14 @@
     if (!vid.videoWidth) return;
     const card = $("vid-card");
     card.style.aspectRatio = vid.videoWidth + " / " + vid.videoHeight;
-    if (vid.videoWidth > vid.videoHeight) card.classList.add("wide");
+    card.classList.toggle("wide", vid.videoWidth > vid.videoHeight);
   });
   function useYouTube(){
     if (usingYouTube) return;
     usingYouTube = true;
     vid.remove();
+    $("vid-card").style.aspectRatio = "9 / 16";
+    $("vid-card").classList.remove("wide");
     const holder = document.createElement("div");
     holder.id = "yt";
     $("vid-inner").appendChild(holder);
