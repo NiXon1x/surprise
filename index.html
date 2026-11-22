@@ -1,0 +1,561 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="theme-color" content="#120a24">
+<title>A Surprise For You 🎁</title>
+<meta property="og:title" content="I got you a surprise 🎁">
+<meta property="og:description" content="Open it. Trust me. ❤️">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Hind+Siliguri:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#fff; --muted:#b7a9d6;
+    --night:#120a24;
+    --pink:#ff4fa3; --violet:#8b5cff; --cyan:#3de0ff; --gold:#ffd166;
+    --glass:rgba(255,255,255,.08); --glass-line:rgba(255,255,255,.16);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:"Fredoka","Hind Siliguri",system-ui,sans-serif;
+    color:var(--ink); background:var(--night);
+    overflow:hidden; -webkit-tap-highlight-color:transparent;
+  }
+
+  /* ---------- Aurora background ---------- */
+  .aurora{position:fixed; inset:0; overflow:hidden; z-index:0; pointer-events:none}
+  .aurora b{
+    position:absolute; width:60vmax; height:60vmax; border-radius:50%;
+    filter:blur(80px); opacity:.55; mix-blend-mode:screen;
+    animation:drift 18s ease-in-out infinite alternate;
+  }
+  .aurora b:nth-child(1){background:var(--pink); top:-20vmax; left:-15vmax}
+  .aurora b:nth-child(2){background:var(--violet); bottom:-25vmax; right:-15vmax; animation-delay:-6s}
+  .aurora b:nth-child(3){background:var(--cyan); top:30%; left:40%; width:35vmax; height:35vmax; opacity:.3; animation-delay:-12s}
+  @keyframes drift{
+    0%{transform:translate(0,0) scale(1)}
+    50%{transform:translate(8vmax,6vmax) scale(1.15)}
+    100%{transform:translate(-6vmax,10vmax) scale(.95)}
+  }
+  .floaties{position:fixed; inset:0; z-index:1; pointer-events:none; overflow:hidden}
+  .floaties span{
+    position:absolute; bottom:-10vh; font-size:22px; opacity:0;
+    animation:rise linear infinite;
+  }
+  @keyframes rise{
+    0%{transform:translateY(0) rotate(0); opacity:0}
+    10%{opacity:.7}
+    90%{opacity:.5}
+    100%{transform:translateY(-120vh) rotate(360deg); opacity:0}
+  }
+
+  /* ---------- Gift screen ---------- */
+  #gift-screen{
+    position:fixed; inset:0; z-index:5; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:40px; padding:16px;
+    transition:opacity .5s ease, transform .5s ease;
+  }
+  #gift-screen.gone{opacity:0; transform:scale(1.3); pointer-events:none}
+  .from{
+    font-size:14px; letter-spacing:3px; text-transform:uppercase; color:var(--muted);
+    background:var(--glass); border:1px solid var(--glass-line);
+    padding:8px 16px; border-radius:99px; backdrop-filter:blur(10px);
+  }
+  .gift-wrap{position:relative; display:grid; place-items:center}
+  .halo{
+    position:absolute; width:320px; height:320px; border-radius:50%;
+    background:conic-gradient(from 0deg,var(--pink),var(--gold),var(--cyan),var(--violet),var(--pink));
+    filter:blur(50px); opacity:.55; animation:spin 6s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .gift{
+    position:relative; width:200px; height:210px; cursor:pointer; border:0; background:none;
+    animation:hop 2.6s ease-in-out infinite;
+  }
+  .gift:focus-visible{outline:3px dashed var(--gold); outline-offset:12px; border-radius:16px}
+  @keyframes hop{
+    0%,55%,100%{transform:translateY(0) rotate(0)}
+    62%{transform:translateY(-18px) rotate(-5deg)}
+    70%{transform:translateY(0) rotate(4deg) scaleY(.94)}
+    78%{transform:translateY(-8px) rotate(-2deg)}
+    86%{transform:translateY(0) rotate(0)}
+  }
+  .gift .base{
+    position:absolute; bottom:0; left:15px; width:170px; height:130px; border-radius:10px;
+    background:linear-gradient(90deg,#ff5fae 0 50%,#d93a87 50% 100%);
+    box-shadow:inset 0 -12px 0 rgba(0,0,0,.12), 0 25px 40px rgba(0,0,0,.4);
+  }
+  .gift .lid{
+    position:absolute; top:44px; left:0; width:200px; height:46px; border-radius:10px; z-index:2;
+    background:linear-gradient(90deg,#ff74ba 0 50%,#e44a94 50% 100%);
+    box-shadow:0 6px 0 rgba(0,0,0,.12);
+    transition:transform .8s cubic-bezier(.2,1.6,.4,1);
+  }
+  .ribbon{
+    position:absolute; left:50%; top:0; transform:translateX(-50%); width:32px; height:100%;
+    background:linear-gradient(90deg,#ffe08a,var(--gold),#e8a900);
+    overflow:hidden;
+  }
+  .ribbon::after{
+    content:""; position:absolute; inset:-50% 0; width:100%;
+    background:linear-gradient(180deg,transparent 30%,rgba(255,255,255,.8) 50%,transparent 70%);
+    animation:shine 2.2s ease-in-out infinite;
+  }
+  @keyframes shine{from{transform:translateY(-60%)}to{transform:translateY(60%)}}
+  .bow{position:absolute; bottom:100%; left:50%; width:0; height:0}
+  .bow i{
+    position:absolute; bottom:-6px; width:56px; height:44px;
+    border:13px solid var(--gold); border-radius:50% 50% 12% 50%;
+  }
+  .bow i:first-child{right:-2px; transform:rotate(-25deg)}
+  .bow i:last-child{left:-2px; transform:scaleX(-1) rotate(-25deg)}
+  .gift .q{
+    position:absolute; left:50%; bottom:28px; transform:translateX(-50%); z-index:1;
+    font-size:64px; font-weight:700; color:rgba(255,255,255,.9);
+    text-shadow:0 4px 0 rgba(0,0,0,.15);
+  }
+  .gift.shake{animation:shake .5s linear 2}
+  @keyframes shake{
+    0%,100%{transform:translate(0,0) rotate(0)}
+    20%{transform:translate(-6px,2px) rotate(-6deg)}
+    40%{transform:translate(6px,-2px) rotate(6deg)}
+    60%{transform:translate(-4px,1px) rotate(-4deg)}
+    80%{transform:translate(4px,-1px) rotate(4deg)}
+  }
+  .gift.open{animation:none}
+  .gift.open .lid{transform:translate(-30px,-170px) rotate(-40deg)}
+  .flash{
+    position:fixed; inset:0; z-index:50; background:#fff; opacity:0; pointer-events:none;
+  }
+  .flash.go{animation:flash .7s ease-out}
+  @keyframes flash{0%{opacity:0}15%{opacity:.85}100%{opacity:0}}
+
+  .cta{
+    font-size:clamp(26px,7vw,40px); font-weight:700; text-align:center;
+    background:linear-gradient(90deg,#fff,var(--gold),var(--pink),#fff);
+    background-size:300% 100%; -webkit-background-clip:text; background-clip:text; color:transparent;
+    animation:sheen 3s linear infinite;
+  }
+  .cta small{display:block; font-size:15px; font-weight:500; color:var(--muted); -webkit-text-fill-color:var(--muted); margin-top:6px}
+  @keyframes sheen{to{background-position:-300% 0}}
+
+  /* ---------- Stage ---------- */
+  #stage{
+    position:fixed; inset:0; z-index:5; display:none;
+    align-items:center; justify-content:center; gap:40px; padding:24px;
+  }
+  #stage.show{display:flex; animation:popin .7s cubic-bezier(.2,1.4,.4,1)}
+  @keyframes popin{from{opacity:0; transform:scale(.8) translateY(30px)}to{opacity:1; transform:none}}
+
+  .vid-card{
+    position:relative; width:330px; aspect-ratio:9/16; border-radius:28px; padding:4px;
+    background:conic-gradient(from var(--a,0deg),var(--pink),var(--gold),var(--cyan),var(--violet),var(--pink));
+    animation:ring 4s linear infinite; transform:rotate(-3deg);
+    box-shadow:0 30px 80px rgba(255,79,163,.35);
+    touch-action:none;
+  }
+  @property --a{syntax:"<angle>"; inherits:false; initial-value:0deg}
+  @keyframes ring{to{--a:360deg}}
+  .vid-inner{width:100%; height:100%; border-radius:24px; overflow:hidden; background:#000; position:relative}
+  .vid-inner video, .vid-inner iframe, #yt{width:100%; height:100%; object-fit:cover; display:block; border:0}
+  .live{
+    position:absolute; top:12px; left:12px; z-index:2; font-size:12px; font-weight:600; letter-spacing:1px;
+    background:#ff2d55; padding:3px 9px; border-radius:6px; display:flex; align-items:center; gap:6px;
+  }
+  .live::before{content:""; width:7px; height:7px; border-radius:50%; background:#fff; animation:blink 1s infinite}
+  @keyframes blink{50%{opacity:.2}}
+  .tap-sound{
+    position:absolute; inset:auto 12px 12px 12px; z-index:3; display:none;
+    background:rgba(0,0,0,.65); border:0; color:#fff; font:inherit; font-size:14px;
+    padding:10px; border-radius:14px; cursor:pointer;
+  }
+
+  /* phone */
+  .phone{
+    width:390px; height:min(760px,90vh); display:flex; flex-direction:column; position:relative;
+    background:linear-gradient(180deg,#160d2b,#0d0820); border-radius:44px; overflow:hidden;
+    border:10px solid #05030b; box-shadow:0 0 0 2px #2a1f45, 0 40px 90px rgba(0,0,0,.6);
+  }
+  .notch{
+    position:absolute; top:8px; left:50%; transform:translateX(-50%); z-index:4;
+    width:110px; height:28px; border-radius:20px; background:#000;
+  }
+  .chat-head{
+    display:flex; align-items:center; gap:12px; padding:46px 16px 14px;
+    background:rgba(22,13,43,.85); backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--glass-line); position:relative; z-index:3;
+  }
+  .back{font-size:22px; color:var(--pink); opacity:.9}
+  .avatar{
+    position:relative; width:46px; height:46px; flex:none; border-radius:50%; padding:2.5px;
+    background:conic-gradient(from var(--a,0deg),var(--pink),var(--gold),var(--cyan),var(--pink));
+    animation:ring 3s linear infinite;
+  }
+  .avatar div{
+    width:100%; height:100%; border-radius:50%; display:grid; place-items:center;
+    background:#24163f; font-size:22px;
+  }
+  .avatar::after{
+    content:""; position:absolute; right:0; bottom:1px; width:12px; height:12px; border-radius:50%;
+    background:#35e07a; border:2px solid #160d2b;
+  }
+  .who{min-width:0; flex:1; line-height:1.25}
+  .who b{display:block; font-size:16px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .who small{color:#35e07a; font-size:13px}
+  .count{
+    flex:none; min-width:30px; height:26px; padding:0 8px; border-radius:99px; display:grid; place-items:center;
+    background:var(--pink); font-size:13px; font-weight:700; box-shadow:0 0 18px rgba(255,79,163,.6);
+  }
+  .count.bump{animation:bump .3s ease}
+  @keyframes bump{50%{transform:scale(1.3)}}
+
+  .chat-body{
+    flex:1; overflow-y:auto; padding:16px 14px 20px; display:flex; flex-direction:column; gap:10px;
+    scrollbar-width:none;
+  }
+  .chat-body::-webkit-scrollbar{display:none}
+  .pill{
+    align-self:center; font-size:12px; color:var(--muted); text-align:center;
+    background:var(--glass); border:1px solid var(--glass-line); padding:6px 12px; border-radius:99px; max-width:85%;
+  }
+  .row{display:flex; align-items:flex-end; gap:8px; animation:msgin .35s cubic-bezier(.2,1.5,.4,1)}
+  .row .mini{
+    width:26px; height:26px; flex:none; border-radius:50%; background:#24163f;
+    display:grid; place-items:center; font-size:14px; visibility:hidden;
+  }
+  .row.tail .mini{visibility:visible}
+  .msg{
+    position:relative; max-width:70%; padding:10px 16px 7px;
+    border-radius:20px 20px 20px 6px; font-size:19px; font-weight:500;
+    background:linear-gradient(135deg,var(--pink),var(--violet));
+    box-shadow:0 8px 20px rgba(139,92,255,.3);
+  }
+  .msg.alt{background:linear-gradient(135deg,#ff7a59,var(--pink))}
+  .msg.alt2{background:linear-gradient(135deg,var(--violet),#3d7bff)}
+  .msg .bn{font-family:"Hind Siliguri",sans-serif; font-weight:700; font-size:21px}
+  .msg time{display:block; text-align:right; font-size:11px; opacity:.75; margin-top:1px}
+  .msg.loud{animation:loud .5s ease}
+  @keyframes loud{
+    0%,100%{transform:none} 20%{transform:rotate(-4deg) scale(1.12)} 40%{transform:rotate(4deg) scale(1.12)} 60%{transform:rotate(-2deg)}
+  }
+  .react{
+    position:absolute; right:-8px; bottom:-12px; font-size:13px; padding:2px 6px; border-radius:99px;
+    background:#2a1b4a; border:2px solid #0d0820; animation:pop .4s cubic-bezier(.2,2,.4,1);
+  }
+  @keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
+  @keyframes msgin{from{opacity:0; transform:translateY(14px) scale(.9)}to{opacity:1; transform:none}}
+  .typing{
+    display:flex; gap:5px; padding:14px 16px; border-radius:20px 20px 20px 6px;
+    background:rgba(255,255,255,.1);
+  }
+  .typing i{width:8px; height:8px; border-radius:50%; background:#fff; animation:dot 1s infinite}
+  .typing i:nth-child(2){animation-delay:.15s}
+  .typing i:nth-child(3){animation-delay:.3s}
+  @keyframes dot{0%,80%,100%{transform:translateY(0);opacity:.35}40%{transform:translateY(-6px);opacity:1}}
+
+  .chat-foot{
+    display:flex; gap:10px; align-items:center; padding:12px 14px calc(14px + env(safe-area-inset-bottom));
+    background:rgba(22,13,43,.9); border-top:1px solid var(--glass-line);
+  }
+  .fake-input{
+    flex:1; background:rgba(255,255,255,.07); color:var(--muted); border-radius:22px; padding:12px 16px;
+    font-size:14px; user-select:none; border:1px solid var(--glass-line); cursor:not-allowed;
+  }
+  .send{
+    width:44px; height:44px; flex:none; border-radius:50%; display:grid; place-items:center;
+    background:rgba(255,255,255,.08); color:var(--muted); font-size:18px; cursor:not-allowed;
+  }
+  .nope{
+    position:absolute; left:50%; bottom:90px; transform:translateX(-50%); z-index:6;
+    background:#ff2d55; padding:8px 14px; border-radius:12px; font-size:14px; white-space:nowrap;
+    opacity:0; transition:opacity .2s, transform .2s; pointer-events:none;
+  }
+  .nope.show{opacity:1; transform:translateX(-50%) translateY(-6px)}
+
+  /* ---------- Phone screens: full-screen chat + floating video ---------- */
+  @media (max-width:760px){
+    #stage{padding:0; gap:0}
+    .phone{width:100%; height:100dvh; border:0; border-radius:0; box-shadow:none}
+    .notch{display:none}
+    .chat-head{padding-top:calc(14px + env(safe-area-inset-top))}
+    .vid-card{
+      position:fixed; z-index:10; top:calc(86px + env(safe-area-inset-top)); right:12px;
+      width:128px; border-radius:20px; padding:3px; transform:none;
+      transition:width .3s ease;
+    }
+    .vid-inner{border-radius:17px}
+    .vid-card.big{width:min(62vw,260px)}
+    .live{top:8px; left:8px; font-size:10px; padding:2px 6px}
+    .msg{max-width:58%}
+  }
+</style>
+</head>
+<body>
+
+<div class="aurora"><b></b><b></b><b></b></div>
+<div class="floaties" id="floaties"></div>
+<div class="flash" id="flash"></div>
+
+<section id="gift-screen">
+  <div class="from">a gift from Onik</div>
+  <div class="gift-wrap">
+    <div class="halo"></div>
+    <button class="gift" id="gift" aria-label="Open the surprise">
+      <div class="lid"><div class="ribbon"></div><div class="bow"><i></i><i></i></div></div>
+      <div class="base"><div class="ribbon"></div></div>
+      <div class="q">?</div>
+    </button>
+  </div>
+  <p class="cta">Click for a surprise<small>(sound on 🔊)</small></p>
+</section>
+
+<section id="stage">
+  <div class="vid-card" id="vid-card">
+    <div class="vid-inner" id="vid-inner">
+      <span class="live">LIVE</span>
+      <video id="vid" src="stewie.mp4" loop playsinline preload="auto"></video>
+      <button class="tap-sound" id="tap-sound">🔊 Tap for sound</button>
+    </div>
+  </div>
+
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="chat-head">
+      <span class="back">‹</span>
+      <div class="avatar"><div>👶</div></div>
+      <div class="who">
+        <b id="sender-name"></b>
+        <small id="status">online</small>
+      </div>
+      <div class="count" id="count">0</div>
+    </div>
+    <div class="chat-body" id="chat">
+      <div class="pill">Today</div>
+      <div class="pill">🔒 This chat is one-way. You may only receive love.</div>
+    </div>
+    <div class="chat-foot" id="foot">
+      <div class="fake-input">Replying is disabled 🙂</div>
+      <div class="send">➤</div>
+    </div>
+    <div class="nope" id="nope">Nice try. You can't reply 😌</div>
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+<script>
+  /* ====== EDIT THESE ====== */
+  const SENDER_NAME = "Onik - your favourite son ❤️";
+  const WORDS = ["mommy", "mother", "আম্মু", "মা", "আম্মা"];
+  const YOUTUBE_FALLBACK_ID = "PaRbSpnv4CQ";  // used only if stewie.mp4 isn't in the folder
+  const MAX_MESSAGES = 150;
+  /* ======================== */
+
+  const $ = id => document.getElementById(id);
+  $("sender-name").textContent = SENDER_NAME;
+
+  /* floating background emojis */
+  const EMO = ["💖","🎀","✨","🍼","🧸","💕","🌸","⭐"];
+  for (let i = 0; i < 18; i++){
+    const s = document.createElement("span");
+    s.textContent = EMO[i % EMO.length];
+    s.style.left = Math.random() * 100 + "vw";
+    s.style.fontSize = 14 + Math.random() * 20 + "px";
+    s.style.animationDuration = 9 + Math.random() * 12 + "s";
+    s.style.animationDelay = -Math.random() * 20 + "s";
+    $("floaties").appendChild(s);
+  }
+
+  /* ---------- video: local file first, YouTube as fallback ---------- */
+  const vid = $("vid");
+  let usingYouTube = false;
+  vid.addEventListener("error", useYouTube);
+  function useYouTube(){
+    if (usingYouTube) return;
+    usingYouTube = true;
+    vid.remove();
+    const holder = document.createElement("div");
+    holder.id = "yt";
+    $("vid-inner").appendChild(holder);
+    window.onYouTubeIframeAPIReady = () => {
+      const vars = { autoplay:1, loop:1, playlist:YOUTUBE_FALLBACK_ID, controls:0, playsinline:1, rel:0 };
+      if (location.protocol.startsWith("http")) vars.origin = location.origin;
+      new YT.Player("yt", {
+        host:"https://www.youtube.com", videoId:YOUTUBE_FALLBACK_ID, playerVars:vars,
+        events:{
+          onReady:e => { e.target.unMute(); e.target.setVolume(100); e.target.playVideo(); },
+          onStateChange:e => { if (e.data === YT.PlayerState.ENDED){ e.target.seekTo(0); e.target.playVideo(); } }
+        }
+      });
+    };
+    const tag = document.createElement("script");
+    tag.src = "https://www.youtube.com/iframe_api";
+    document.head.appendChild(tag);
+  }
+  function startVideo(){
+    if (usingYouTube) return;
+    vid.muted = false; vid.volume = 1;
+    vid.play().catch(() => {
+      if (vid.error || vid.networkState === 3) return useYouTube();
+      // browser blocked sound: play muted and offer a tap
+      vid.muted = true; vid.play().catch(()=>{});
+      $("tap-sound").style.display = "block";
+    });
+  }
+  $("tap-sound").addEventListener("click", e => {
+    e.stopPropagation(); vid.muted = false; vid.play(); e.target.style.display = "none";
+  });
+
+  /* ---------- floating video on phones: drag + tap to resize ---------- */
+  (function(){
+    const card = $("vid-card"); let sx, sy, ox, oy, moved = false, down = false;
+    const small = () => matchMedia("(max-width:760px)").matches;
+    card.addEventListener("pointerdown", e => {
+      if (!small()) return;
+      down = true; moved = false; sx = e.clientX; sy = e.clientY;
+      const r = card.getBoundingClientRect(); ox = r.left; oy = r.top;
+      card.setPointerCapture(e.pointerId);
+    });
+    card.addEventListener("pointermove", e => {
+      if (!down) return;
+      const dx = e.clientX - sx, dy = e.clientY - sy;
+      if (Math.abs(dx) + Math.abs(dy) > 6) moved = true;
+      if (!moved) return;
+      const w = card.offsetWidth, h = card.offsetHeight;
+      card.style.left = Math.max(6, Math.min(innerWidth - w - 6, ox + dx)) + "px";
+      card.style.top  = Math.max(6, Math.min(innerHeight - h - 6, oy + dy)) + "px";
+      card.style.right = "auto";
+    });
+    card.addEventListener("pointerup", e => {
+      if (!down) return; down = false;
+      if (!moved && e.target.id !== "tap-sound") card.classList.toggle("big");
+    });
+  })();
+
+  /* ---------- open the gift ---------- */
+  const gift = $("gift");
+  let opened = false;
+  function party(){
+    const colors = ["#ff4fa3","#ffd166","#3de0ff","#8b5cff","#ffffff","#35e07a"];
+    let heart;
+    try { heart = confetti.shapeFromText({ text:"❤️", scalar:2 }); } catch(e){}
+    confetti({ particleCount:200, spread:110, startVelocity:60, origin:{y:.6}, colors, zIndex:60 });
+    if (heart) confetti({ particleCount:40, spread:120, startVelocity:45, origin:{y:.6}, shapes:[heart], scalar:2, zIndex:60 });
+    const end = Date.now() + 3000;
+    (function frame(){
+      confetti({ particleCount:5, angle:60,  spread:60, origin:{x:0, y:.75}, colors, zIndex:60 });
+      confetti({ particleCount:5, angle:120, spread:60, origin:{x:1, y:.75}, colors, zIndex:60 });
+      if (Date.now() < end) requestAnimationFrame(frame);
+    })();
+    setTimeout(() => confetti({ particleCount:150, spread:180, startVelocity:35, origin:{y:.2}, scalar:1.2, colors, zIndex:60 }), 900);
+  }
+  function open(){
+    if (opened) return;
+    opened = true;
+    startVideo();                       // must happen inside the tap so sound is allowed
+    gift.classList.add("shake");
+    setTimeout(() => {
+      gift.classList.remove("shake");
+      gift.classList.add("open");
+      $("flash").classList.add("go");
+      party();
+      if (navigator.vibrate) navigator.vibrate([60, 40, 120]);
+    }, 1000);
+    setTimeout(() => {
+      $("gift-screen").classList.add("gone");
+      setTimeout(() => {
+        $("gift-screen").style.display = "none";
+        $("stage").classList.add("show");
+        setTimeout(sendOne, 700);
+      }, 450);
+    }, 2000);
+  }
+  gift.addEventListener("click", open);
+
+  /* ---------- the endless chat ---------- */
+  const chat = $("chat"), statusEl = $("status"), countEl = $("count");
+  const isBangla = s => /[ঀ-৿]/.test(s);
+  const REACTS = ["❤️","🥺","😭","🫶","😤","👶"];
+  let last = -1, n = 0, prevRow = null;
+
+  function pickWord(){
+    let i;
+    do { i = Math.floor(Math.random() * WORDS.length); } while (WORDS.length > 1 && i === last);
+    last = i; return WORDS[i];
+  }
+  const nowTime = () => new Date().toLocaleTimeString([], { hour:"numeric", minute:"2-digit" });
+  const scrollDown = () => chat.scrollTo({ top:chat.scrollHeight, behavior:"smooth" });
+
+  function addTyping(){
+    const row = document.createElement("div");
+    row.className = "row tail";
+    row.innerHTML = '<div class="mini">👶</div><div class="typing"><i></i><i></i><i></i></div>';
+    chat.appendChild(row);
+    statusEl.textContent = "typing…";
+    scrollDown();
+    return row;
+  }
+
+  function addMessage(){
+    const word = pickWord();
+    const row = document.createElement("div");
+    row.className = "row tail";
+    if (prevRow) prevRow.classList.remove("tail");
+    const mini = document.createElement("div");
+    mini.className = "mini"; mini.textContent = "👶";
+    const msg = document.createElement("div");
+    const r = Math.random();
+    msg.className = "msg" + (r < .2 ? " alt" : r < .35 ? " alt2" : "") + (Math.random() < .18 ? " loud" : "");
+    const span = document.createElement("span");
+    span.textContent = word;
+    if (isBangla(word)) span.className = "bn";
+    const t = document.createElement("time");
+    t.textContent = nowTime();
+    msg.append(span, t);
+    if (Math.random() < .15){
+      const re = document.createElement("span");
+      re.className = "react";
+      re.textContent = REACTS[Math.floor(Math.random() * REACTS.length)];
+      setTimeout(() => msg.appendChild(re), 500);
+    }
+    row.append(mini, msg);
+    chat.appendChild(row);
+    prevRow = row;
+    while (chat.children.length > MAX_MESSAGES) chat.firstElementChild.remove();
+
+    n++;
+    countEl.textContent = n > 999 ? "999+" : n;
+    countEl.classList.remove("bump"); void countEl.offsetWidth; countEl.classList.add("bump");
+    document.title = `(${n}) Onik ❤️`;
+    statusEl.textContent = "online";
+    scrollDown();
+  }
+
+  function sendOne(){
+    const typing = addTyping();
+    setTimeout(() => {
+      typing.remove();
+      // sometimes he spams 2–4 in a row without stopping to type
+      const burst = Math.random() < .2 ? 2 + Math.floor(Math.random() * 3) : 1;
+      let k = 0;
+      (function next(){
+        addMessage();
+        if (++k < burst) setTimeout(next, 220);
+        else setTimeout(sendOne, 300 + Math.random() * 900);
+      })();
+    }, 400 + Math.random() * 700);
+  }
+
+  /* trying to reply = gets roasted */
+  let nopeT;
+  $("foot").addEventListener("click", () => {
+    $("nope").classList.add("show");
+    clearTimeout(nopeT);
+    nopeT = setTimeout(() => $("nope").classList.remove("show"), 1600);
+  });
+</script>
+</body>
+</html>
